@@ -1,0 +1,62 @@
+{% extends 'hello/base.html' %}
+
+{% block title %}{{ entry.title }} - 百度百科风格项目{% endblock %}
+
+{% block content %}
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h1 class="mb-0">{{ entry.title }}</h1>
+        </div>
+        <div class="card-body">
+            <!-- 词条元信息 -->
+            <div class="mb-4 entry-meta">
+                {% if entry.category %}
+                    <a href="{% url 'category_entries' entry.category.pk %}" class="badge bg-secondary me-2">
+                        {{ entry.category.name }}
+                    </a>
+                {% else %}
+                    <span class="badge bg-secondary me-2">未分类</span>
+                {% endif %}
+                <span class="me-3">创建时间：{{ entry.created_at|date:"Y-m-d H:i" }}</span>
+                <span class="me-3">更新时间：{{ entry.updated_at|date:"Y-m-d H:i" }}</span>
+                <span>浏览次数：{{ entry.view_count }}</span>
+            </div>
+
+            <!-- 词条内容 -->
+            <div class="entry-content mb-6">
+                {{ entry.content|linebreaks }}
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="entry-actions">
+                <a href="{% url 'entry_list' %}" class="btn btn-outline-secondary me-2">返回列表</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'entry_edit' entry.pk %}" class="btn btn-outline-primary me-2">编辑词条</a>
+                    <a href="{% url 'entry_delete' entry.pk %}" class="btn btn-outline-danger">删除词条</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- 相关词条推荐 -->
+    <div class="mt-6">
+        <h3>相关词条</h3>
+        <div class="card">
+            <div class="card-body">
+                {% if entry.category and entry.category.entries.count > 1 %}
+                    <ul class="list-unstyled">
+                        {% for related_entry in entry.category.entries.exclude(pk=entry.pk)|slice:5 %}
+                            <li>
+                                <a href="{% url 'entry_detail' related_entry.pk %}" class="text-decoration-none text-dark hover:text-primary">
+                                    {{ related_entry.title }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">暂无相关词条</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

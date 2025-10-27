@@ -1,0 +1,33 @@
+{% extends 'hello/base.html' %}
+
+{% block title %}确认删除 - 百度百科风格项目{% endblock %}
+
+{% block content %}
+    <div class="card shadow-sm">
+        <div class="card-header bg-danger text-white">
+            <h2 class="mb-0">确认删除</h2>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning" role="alert">
+                您确定要删除词条 <strong>{{ entry.title }}</strong> 吗？此操作不可撤销！
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    <h3>词条信息</h3>
+                    <p><strong>标题：</strong>{{ entry.title }}</p>
+                    <p><strong>创建时间：</strong>{{ entry.created_at|date:"Y-m-d H:i" }}</p>
+                    <p><strong>更新时间：</strong>{{ entry.updated_at|date:"Y-m-d H:i" }}</p>
+                    <p><strong>浏览次数：</strong>{{ entry.view_count }}</p>
+                </div>
+                
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-danger me-2">确认删除</button>
+                    <a href="{% url 'entry_detail' entry.pk %}" class="btn btn-outline-secondary">取消</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

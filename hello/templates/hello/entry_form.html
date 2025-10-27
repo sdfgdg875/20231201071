@@ -1,0 +1,67 @@
+{% extends 'hello/base.html' %}
+
+{% block title %}{{ title }} - 百度百科风格项目{% endblock %}
+
+{% block content %}
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h2 class="mb-0">{{ title }}</h2>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="id_title" class="form-label">词条标题</label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.title.errors %}
+                                <small>{{ error }}</small><br>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    <label for="id_category" class="form-label">所属分类</label>
+                    {{ form.category }}
+                    {% if form.category.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.category.errors %}
+                                <small>{{ error }}</small><br>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            没有合适的分类？<a href="{% url 'category_create' %}" class="text-primary">创建新分类</a>
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="id_content" class="form-label">词条内容</label>
+                    {{ form.content }}
+                    {% if form.content.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.content.errors %}
+                                <small>{{ error }}</small><br>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            提示：请输入详细、准确的词条内容，支持基本的文本格式。
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary me-2">保存</button>
+                    <a href="{% if entry %}{% url 'entry_detail' entry.pk %}{% else %}{% url 'entry_list' %}{% endif %}" class="btn btn-outline-secondary">取消</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

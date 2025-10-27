@@ -1,0 +1,60 @@
+{% extends 'hello/base.html' %}
+
+{% block title %}{% if current_category %}{{ current_category.name }} - {% endif %}百度百科风格项目{% endblock %}
+
+{% block content %}
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h2 class="mb-0">
+                {% if current_category %}
+                    {{ current_category.name }} - 词条列表
+                {% else %}
+                    百科词条列表
+                {% endif %}
+            </h2>
+        </div>
+        <div class="card-body">
+            {% if entries %}
+                {% for entry in entries %}
+                    <div class="entry-list-item">
+                        <h3 class="entry-title">
+                            <a href="{% url 'entry_detail' entry.pk %}" class="text-decoration-none text-dark hover:text-primary">
+                                {{ entry.title }}
+                            </a>
+                        </h3>
+                        <p class="text-muted mb-2">
+                            {{ entry.content|striptags|truncatechars:150 }}
+                        </p>
+                        <div class="entry-meta">
+                            <span class="me-3">
+                                {% if entry.category %}
+                                    <a href="{% url 'category_entries' entry.category.pk %}" class="badge bg-secondary">
+                                        {{ entry.category.name }}
+                                    </a>
+                                {% else %}
+                                    <span class="badge bg-secondary">未分类</span>
+                                {% endif %}
+                            </span>
+                            <span class="me-3">创建时间：{{ entry.created_at|date:"Y-m-d H:i" }}</span>
+                            <span class="me-3">更新时间：{{ entry.updated_at|date:"Y-m-d H:i" }}</span>
+                            <span>浏览次数：{{ entry.view_count }}</span>
+                            {% if user.is_authenticated %}
+                                <div class="mt-2">
+                                    <a href="{% url 'entry_edit' entry.pk %}" class="btn btn-sm btn-outline-primary me-2">编辑</a>
+                                    <a href="{% url 'entry_delete' entry.pk %}" class="btn btn-sm btn-outline-danger">删除</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center py-5">
+                    <p class="text-muted">暂无词条</p>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'entry_create' %}" class="btn btn-primary mt-2">创建第一个词条</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
